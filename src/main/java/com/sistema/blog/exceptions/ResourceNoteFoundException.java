@@ -20,7 +20,7 @@ public class ResourceNoteFoundException extends RuntimeException{
 	
 	
 	public ResourceNoteFoundException(String nombreRecurso, String nombreCampo, long valorCampo) {
-		super(String.format("%s No encontrado con : %s : '%s'", nombreRecurso, nombreCampo, valorCampo ));
+		super(String.format("%s no encontrada con : %s : '%s'", nombreRecurso, nombreCampo, valorCampo ));
 		this.nombreRecurso = nombreRecurso;
 		this.nombreCampo = nombreCampo;
 		this.valorCampo = valorCampo;
