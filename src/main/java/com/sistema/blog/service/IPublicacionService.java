@@ -8,7 +8,7 @@ public interface IPublicacionService {
 
 	public PublicacionDTO crearPublicacion(PublicacionDTO publicacionDTO);
 	
-	public PublicacionRespuesta obtenerTodaslasPublicaciones(int numPagina, int medidaPagina);
+	public PublicacionRespuesta obtenerTodaslasPublicaciones(int numPagina, int medidaPagina, String ordenarPor, String sortDir);
 	
 	public PublicacionDTO obtenerPublicacionPorId(long id);
 	

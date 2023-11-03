@@ -15,8 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.sistema.blog.dto.PublicacionDTO;
 import com.sistema.blog.dto.PublicacionRespuesta;
 import com.sistema.blog.service.IPublicacionService;
-
-
+import com.sistema.blog.utility.AppConstans;
 
 @RestController
 @RequestMapping("/api/publicaciones")
@@ -27,9 +26,11 @@ public class PublicacionController {
 
 	@GetMapping
 	public PublicacionRespuesta listarPublicaciones(
-			@RequestParam(value = "pageNo", defaultValue = "0", required = false) int numPagina,
-			@RequestParam(value = "pageSize", defaultValue = "10", required = false) int medidaPagina) {
-		return publicacionService.obtenerTodaslasPublicaciones(numPagina,medidaPagina);
+			@RequestParam(value = "pageNo", defaultValue = AppConstans.MEDIDA_DE_PAGINA_DEFECTO, required = false) int numPagina,
+			@RequestParam(value = "pageSize", defaultValue = AppConstans.MEDIDA_DE_PAGINA_DEFECTO, required = false) int medidaPagina,
+			@RequestParam(value = "sortBy", defaultValue = AppConstans.ORDENAR_POR_DEFECTO, required = false) String ordenarPor,
+			@RequestParam(value = "sortDir", defaultValue = AppConstans.ORDENAR_DIRECCION_POR_DEFECTO, required = false) String ShortDir) {
+		return publicacionService.obtenerTodaslasPublicaciones(numPagina, medidaPagina, ordenarPor, ShortDir);
 	}
 
 	@GetMapping("/{id}")
