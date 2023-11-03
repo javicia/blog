@@ -3,6 +3,8 @@ package com.sistema.blog.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,29 +16,28 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
 @Entity
-@Table(name="publicaciones", uniqueConstraints= {@UniqueConstraint(columnNames = {"titulo"})})
+@Table(name = "publicaciones", uniqueConstraints = { @UniqueConstraint(columnNames = { "titulo" }) })
 public class Publicacion {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@Column(name="titulo", nullable = false )
+
+	@Column(name = "titulo", nullable = false)
 	private String titulo;
-	
-	@Column(name="descripcion" , nullable = false)
+
+	@Column(name = "descripcion", nullable = false)
 	private String descripcion;
-	
-	@Column(name="contenido", nullable = false)
+
+	@Column(name = "contenido", nullable = false)
 	private String contenido;
-	
-	
-	@OneToMany(mappedBy="publicacion", cascade = CascadeType.ALL,orphanRemoval = true)
+
+	@JsonBackReference
+	@OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<Comentario> comentarios = new HashSet<>();
-	
-	
+
 	public Publicacion() {
-		
+
 	}
 
 	public Publicacion(Long id, String titulo, String descripcion, String contenido) {
@@ -79,7 +80,12 @@ public class Publicacion {
 		this.contenido = contenido;
 	}
 
-	
-	
-	
+	public Set<Comentario> getComentarios() {
+		return comentarios;
+	}
+
+	public void setComentarios(Set<Comentario> comentarios) {
+		this.comentarios = comentarios;
+	}
+
 }

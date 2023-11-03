@@ -3,6 +3,7 @@ package com.sistema.blog.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ public class ComentarioServiceImpl implements IComentarioService{
 
 	
 	@Autowired
+	private ModelMapper modelMapper;
+	
+	@Autowired
 	private IComentarioRepository comentarioRepository;
 	
 	@Autowired
@@ -35,25 +39,7 @@ public class ComentarioServiceImpl implements IComentarioService{
 		return mapearDTO(nuevoComentario);
 	}
 
-	//mapeando a DTO
-	private ComentarioDTO mapearDTO(Comentario comentario ) {
-		ComentarioDTO comentarioDTO = new ComentarioDTO();
-		comentarioDTO.setId(comentario.getId());
-		comentarioDTO.setNombre(comentario.getNombre());
-		comentarioDTO.setEmail(comentario.getEmail());
-		comentarioDTO.setCuerpo(comentario.getCuerpo());
-		return comentarioDTO;
-	}
-	
-	//mapeando a entindad
-	private Comentario mapearEntidad(ComentarioDTO comentarioDTO ) {
-		Comentario comentario = new Comentario();
-		comentario.setId(comentarioDTO.getId());
-		comentario.setNombre(comentarioDTO.getNombre());
-		comentario.setEmail(comentarioDTO.getEmail());
-		comentario.setCuerpo(comentarioDTO.getCuerpo());
-		return comentario;
-	}
+
 
 	@Override
 	public List<ComentarioDTO> obtenerComentarioPublicacionId(long publicacionId) {
@@ -95,4 +81,30 @@ public class ComentarioServiceImpl implements IComentarioService{
 		return mapearDTO(comentarioActualizado);
 		
 	}
+
+	@Override
+	public void eliminarComentario(Long publicacionId, Long comentarioId) {
+		Publicacion publicacion = publicacionRepository.findById(publicacionId)
+				.orElseThrow(() -> new ResourceNoteFoundException("Publicacion", "id", publicacionId));
+		
+		Comentario comentario = comentarioRepository.findById(comentarioId)
+				.orElseThrow(()-> new ResourceNoteFoundException("Comentario", "id", comentarioId));
+		
+		if(!comentario.getPublicacion().getId().equals(publicacion.getId())) {
+			throw new BlogAppException(HttpStatus.BAD_REQUEST, "El comentario no pertenece a la publicación.");
+		}
+		comentarioRepository.delete(comentario);
+		
+	}
+	//mapeando a DTO
+		private ComentarioDTO mapearDTO(Comentario comentario ) {
+			ComentarioDTO comentarioDTO = modelMapper.map(comentario, ComentarioDTO.class);
+			return comentarioDTO;
+		}
+		
+		//mapeando a entindad
+		private Comentario mapearEntidad(ComentarioDTO comentarioDTO ) {
+			Comentario comentario = modelMapper.map(comentarioDTO, Comentario.class);
+			return comentario;
+		}
 }
