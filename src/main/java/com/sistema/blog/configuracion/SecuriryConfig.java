@@ -29,6 +29,7 @@ public class SecuriryConfig  {
     }
 	
 
+	@SuppressWarnings("deprecation")
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
