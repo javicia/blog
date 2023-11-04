@@ -17,6 +17,8 @@ import com.sistema.blog.dto.PublicacionRespuesta;
 import com.sistema.blog.service.IPublicacionService;
 import com.sistema.blog.utility.AppConstans;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/publicaciones")
 public class PublicacionController {
@@ -26,7 +28,7 @@ public class PublicacionController {
 
 	@GetMapping
 	public PublicacionRespuesta listarPublicaciones(
-			@RequestParam(value = "pageNo", defaultValue = AppConstans.MEDIDA_DE_PAGINA_DEFECTO, required = false) int numPagina,
+			@RequestParam(value = "pageNo", defaultValue = AppConstans.NUMERO_DE_PAGINA_POR_DEFECTO, required = false) int numPagina,
 			@RequestParam(value = "pageSize", defaultValue = AppConstans.MEDIDA_DE_PAGINA_DEFECTO, required = false) int medidaPagina,
 			@RequestParam(value = "sortBy", defaultValue = AppConstans.ORDENAR_POR_DEFECTO, required = false) String ordenarPor,
 			@RequestParam(value = "sortDir", defaultValue = AppConstans.ORDENAR_DIRECCION_POR_DEFECTO, required = false) String ShortDir) {
@@ -39,12 +41,12 @@ public class PublicacionController {
 	}
 
 	@PostMapping
-	public ResponseEntity<PublicacionDTO> guardarPublicacion(@RequestBody PublicacionDTO publicacionDTO) {
+	public ResponseEntity<PublicacionDTO> guardarPublicacion(@Valid @RequestBody PublicacionDTO publicacionDTO) {
 		return new ResponseEntity<>(publicacionService.crearPublicacion(publicacionDTO), HttpStatus.CREATED);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<PublicacionDTO> actualizarPublicacion(@RequestBody PublicacionDTO publicacionDTO,
+	public ResponseEntity<PublicacionDTO> actualizarPublicacion(@Valid @RequestBody PublicacionDTO publicacionDTO,
 			@PathVariable(name = "id") long id) {
 		PublicacionDTO publicacionRespuesta = publicacionService.actualizarPublicacion(publicacionDTO, id);
 		return new ResponseEntity<>(publicacionRespuesta, HttpStatus.OK);

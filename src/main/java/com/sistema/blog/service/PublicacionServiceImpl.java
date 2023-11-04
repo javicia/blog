@@ -4,6 +4,7 @@ import java.util.List;
 
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,9 @@ import com.sistema.blog.repository.IPublicacionesRepository;
 @Service
 public class PublicacionServiceImpl implements IPublicacionService {
 
+	@Autowired
+	private ModelMapper modelMapper;
+	
 	@Autowired
 	private IPublicacionesRepository publicacionRepository;
 
@@ -52,31 +56,7 @@ public class PublicacionServiceImpl implements IPublicacionService {
 		return publicacionResponse;
 	}
 
-	// Método para convertir entidad en DTO
-	private PublicacionDTO mapearDTO(Publicacion publicacion) {
-		PublicacionDTO publicacionDTO = new PublicacionDTO();
-
-		publicacionDTO.setId(publicacion.getId());
-		publicacionDTO.setTitulo(publicacion.getTitulo());
-		publicacionDTO.setDescripcion(publicacion.getDescripcion());
-		publicacionDTO.setContenido(publicacion.getContenido());
-
-		return publicacionDTO;
-
-	}
-
-	// Método para convertir DTO en entidad
-	private Publicacion mapearEntidad(PublicacionDTO publicacionDTO) {
-		Publicacion publicacion = new Publicacion();
-
-		publicacion.setId(publicacionDTO.getId());
-		publicacion.setTitulo(publicacionDTO.getTitulo());
-		publicacion.setDescripcion(publicacionDTO.getDescripcion());
-		publicacion.setContenido(publicacionDTO.getContenido());
-
-		return publicacion;
-
-	}
+	
 
 	@Override
 	public PublicacionDTO obtenerPublicacionPorId(long id) {
@@ -105,5 +85,18 @@ public class PublicacionServiceImpl implements IPublicacionService {
 		publicacionRepository.delete(publicacion);
 
 	}
+	// Método para convertir entidad en DTO
+		private PublicacionDTO mapearDTO(Publicacion publicacion) {
+			PublicacionDTO publicacionDTO= modelMapper.map(publicacion, PublicacionDTO.class); 
 
+			return publicacionDTO;
+
+		}
+
+		// Método para convertir DTO en entidad
+		private Publicacion mapearEntidad(PublicacionDTO publicacionDTO) {
+			Publicacion publicacion = modelMapper.map(publicacionDTO, Publicacion.class);
+			return publicacion;
+
+		}
 }
