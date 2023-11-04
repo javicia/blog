@@ -22,16 +22,16 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecuriryConfig  {
 
-	@Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+    @Bean
+    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
             throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
-	
 
-	@SuppressWarnings("deprecation")
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+    @SuppressWarnings("deprecation")
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeRequests(requests -> requests
                         .requestMatchers(HttpMethod.GET, "/api/**")
@@ -58,9 +58,9 @@ public class SecuriryConfig  {
 								.build();
 						return new InMemoryUserDetailsManager(javier, admin);
 	}
-	
-	@Bean
-	public BCryptPasswordEncoder getEncoder() {
+
+    @Bean
+    BCryptPasswordEncoder getEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 	
