@@ -1,7 +1,5 @@
 package com.sistema.blog.configuracion;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,9 +10,15 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import com.sistema.blog.security.CustomUserDetailsService;
+import com.sistema.blog.security.JwtAuthenticationEntryPoint;
+import com.sistema.blog.security.JwtAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -23,6 +27,15 @@ public class SecuriryConfig{
 
 	@Autowired
 	private CustomUserDetailsService userDetailsService;
+	
+	@Autowired
+	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	
+	
+	@Bean
+	public JwtAuthenticationFilter jwtAuthenticationFilter() {
+		return new JwtAuthenticationFilter();
+	}
 	
     @Bean
    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
@@ -33,15 +46,23 @@ public class SecuriryConfig{
 
     
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+        .csrf(AbstractHttpConfigurer::disable) 
+        .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+        .exceptionHandling(httpSecurityExceptionHandlingConfigurer -> httpSecurityExceptionHandlingConfigurer
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+       )
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest()
                         .authenticated()
-                        )
-                .httpBasic(withDefaults());
+                        );
+                        
+                http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
 	}
     

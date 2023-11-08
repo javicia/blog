@@ -26,6 +26,7 @@ public class JwtTokenProvider {
 	@Value("${app.jwt-expiration-milliseconds}")
 	private int jwtExpirationInMs;
 
+	//Metodo para generar el token
 	public String generarToken(Authentication authentication) {
 		String username = authentication.getName();
 		Date fechaActual = new Date();
@@ -39,11 +40,13 @@ public class JwtTokenProvider {
 
 	}
 	
+	//Metodo para obetenr el usuario
 	public String obtenerUsernameJWT(String token) {
 		Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
 		return claims.getSubject();
 	}
 	
+	//Método para validar token
 	public boolean validarToken(String token) {
 		try {
 			Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);

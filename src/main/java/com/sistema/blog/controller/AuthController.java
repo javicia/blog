@@ -20,6 +20,8 @@ import com.sistema.blog.model.Rol;
 import com.sistema.blog.model.Users;
 import com.sistema.blog.repository.IRolRepository;
 import com.sistema.blog.repository.IUsuarioRepository;
+import com.sistema.blog.security.JWTAuthResonceDTO;
+import com.sistema.blog.security.JwtTokenProvider;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -38,15 +40,23 @@ public class AuthController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
+	
 	
 	
 	@PostMapping("/login")
-	public ResponseEntity<String> authenticateUser(@RequestBody LoginDTO loginDTO){
+	public ResponseEntity<JWTAuthResonceDTO> authenticateUser(@RequestBody LoginDTO loginDTO){
 		Authentication authentication = authenticationManager.authenticate
 				(new UsernamePasswordAuthenticationToken(loginDTO.getUsernameOrEmail(), loginDTO.getPassword()));
 		
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		return new ResponseEntity<>("Ha iniciado sesion con éxito !", HttpStatus.OK);
+		
+		//obtenemos el token del JwtTokenProvider
+		String token = jwtTokenProvider.generarToken(authentication);
+		
+		
+		return ResponseEntity.ok(new JWTAuthResonceDTO(token));
 		
 	}
 	
